@@ -3,7 +3,7 @@ import next from "next";
 import { Server } from "socket.io";
 
 const dev = process.env.NODE_ENV !== "production";
-const hostname = process.env.HOSTNAME || "0.0.0.0";
+const hostname = process.env.HOSTNAME || "localhost";
 const port = parseInt(process.env.PORT || "3000", 10);
 const app = next({ dev, hostname, port });
 
@@ -12,11 +12,7 @@ const handle = app.getRequestHandler();
 app.prepare().then(() => {
   const httpServer = createServer(handle);
 
-  const io = new Server(httpServer, {
-    cors: {
-      origin: "*", // Allow all origins (or specify your frontend's URL in production)
-    },
-  });
+  const io = new Server(httpServer);
 
   io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
@@ -28,7 +24,7 @@ app.prepare().then(() => {
     });
 
     socket.on("message", ({ message, room, sender }) => {
-      console.log(`Message from ${sender} in room ${room}: ${message}`);
+      console.log(`Message from ${sender} in room ${room}: ${message}`)
       socket.to(room).emit("message", { sender, message });
     });
 
@@ -37,7 +33,8 @@ app.prepare().then(() => {
     });
   });
 
-  httpServer.listen(port, "0.0.0.0", () => {
+  httpServer.listen(port, () => {
     console.log(`Server running on http://${hostname}:${port}`);
   });
+
 });
