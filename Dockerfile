@@ -20,4 +20,5 @@ RUN npm run build:socket
 EXPOSE 3000
 
 # Set the default command to start the app
-CMD ["npm", "run", "start:socket"]
+CMD ["node", ".next/standalone/server.js"]
+
